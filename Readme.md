@@ -65,7 +65,7 @@ python train.py --data=ubuntu --model=VHCR --batch_size=40 --sentence_drop=0.25 
 ```
 
 By default, it will save a model checkpoint every epoch to <save_dir> and a tensorboard summary.
-For more arguments and options, see config.py
+For more arguments and options, see config.py.
 
 
 ## Evaluation
