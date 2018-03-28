@@ -427,8 +427,8 @@ class VHCR(nn.Module):
                                                  config.rnn,
                                                  config.num_layers,
                                                  config.dropout)
-        if config.sentence_drop > 0.0:
-                self.unk_sent = nn.Parameter(torch.randn(context_input_size - config.z_conv_size))
+
+        self.unk_sent = nn.Parameter(torch.randn(context_input_size - config.z_conv_size))
 
         self.z_conv2context = layers.FeedForward(config.z_conv_size,
                                                  config.num_layers * config.context_size,
