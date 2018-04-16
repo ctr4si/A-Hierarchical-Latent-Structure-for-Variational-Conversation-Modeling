@@ -636,7 +636,10 @@ class VHCR(nn.Module):
             context_outputs = torch.cat([context_outputs[i, :l, :]
                                          for i, l in enumerate(input_conversation_length.data)])
 
-            sent_mu_prior, sent_var_prior = self.sent_prior(context_outputs)
+
+            z_conv_flat = torch.cat(
+                [z_conv_expand[i, :l, :] for i, l in enumerate(input_conversation_length.data)])
+            sent_mu_prior, sent_var_prior = self.sent_prior(context_outputs, z_conv_flat)
             eps = to_var(torch.randn((num_sentences, self.config.z_sent_size)))
 
             z_sent = sent_mu_prior + torch.sqrt(sent_var_prior) * eps
