@@ -551,9 +551,6 @@ class VariationalSolver(Solver):
             target_sentences,
             decode=True)
 
-        # input_sentences = sentences[:-1]
-        import ipdb; ipdb.set_trace()
-
         # write output to file
         with open(os.path.join(self.config.save_path, 'samples.txt'), 'a') as f:
             f.write(f'<Epoch {self.epoch_i}>\n\n')
