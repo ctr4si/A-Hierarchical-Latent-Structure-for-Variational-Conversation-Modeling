@@ -1,5 +1,5 @@
 /etc/
-/datasets/
+datasets/
 /cornell_movie_dialogue/
 *.orig
 *.lprof
