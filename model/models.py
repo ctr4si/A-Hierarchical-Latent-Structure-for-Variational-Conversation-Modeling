@@ -383,7 +383,7 @@ class VHRED(nn.Module):
             if self.config.sample:
                 prediction = self.decoder(None, decoder_init)
                 p = prediction.data.cpu().numpy()
-                length = np.where(p, EOS_ID)[1]
+                length = np.where(p == EOS_ID)[1]
             else:
                 prediction, final_score, length = self.decoder.beam_decode(init_h=decoder_init)
                 # prediction: [batch_size, seq_len]
@@ -739,7 +739,7 @@ class VHCR(nn.Module):
             if self.config.sample:
                 prediction = self.decoder(None, decoder_init, decode=True)
                 p = prediction.data.cpu().numpy()
-                length = np.where(p = EOS_ID)[1]
+                length = np.where(p == EOS_ID)[1]
             else:
                 prediction, final_score, length = self.decoder.beam_decode(init_h=decoder_init)
                 # prediction: [batch_size, seq_len]
