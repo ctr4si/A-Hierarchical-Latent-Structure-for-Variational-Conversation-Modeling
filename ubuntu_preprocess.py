@@ -14,7 +14,7 @@ import pickle
 from tqdm import tqdm
 import pandas as pd
 
-from Seq2Seq.utils import Tokenizer, Vocab, PAD_TOKEN, SOS_TOKEN, EOS_TOKEN
+from model.utils import Tokenizer, Vocab, PAD_TOKEN, SOS_TOKEN, EOS_TOKEN
 
 project_dir = Path(__file__).resolve().parent
 datasets_dir = project_dir.joinpath('datasets/')

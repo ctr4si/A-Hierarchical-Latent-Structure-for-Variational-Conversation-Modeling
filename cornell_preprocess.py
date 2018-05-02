@@ -9,7 +9,7 @@ from urllib.request import urlretrieve
 from zipfile import ZipFile
 from pathlib import Path
 from tqdm import tqdm
-from Seq2Seq.utils import Tokenizer, Vocab, PAD_TOKEN, SOS_TOKEN, EOS_TOKEN
+from model.utils import Tokenizer, Vocab, PAD_TOKEN, SOS_TOKEN, EOS_TOKEN
 
 project_dir = Path(__file__).resolve().parent
 datasets_dir = project_dir.joinpath('datasets/')
