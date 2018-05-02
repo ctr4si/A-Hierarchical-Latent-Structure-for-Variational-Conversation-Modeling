@@ -61,7 +61,7 @@ class HRED(nn.Module):
                 - eval: [batch_size, seq_len]
         """
         num_sentences = input_sentences.size(0)
-        max_len = input_conversation_length.data.max()
+        max_len = input_conversation_length.data.max().item()
 
         # encoder_outputs: [num_sentences, max_source_length, hidden_size * direction]
         # encoder_hidden: [num_layers * direction, num_sentences, hidden_size]
@@ -269,7 +269,7 @@ class VHRED(nn.Module):
         """
         batch_size = input_conversation_length.size(0)
         num_sentences = sentences.size(0) - batch_size
-        max_len = input_conversation_length.data.max()
+        max_len = input_conversation_length.data.max().item()
 
         # encoder_outputs: [num_sentences + batch_size, max_source_length, hidden_size]
         # encoder_hidden: [num_layers * direction, num_sentences + batch_size, hidden_size]

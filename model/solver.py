@@ -172,7 +172,7 @@ class Solver(object):
 
                 if batch_i % self.config.print_every == 0:
                     tqdm.write(
-                        f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.data[0] / n_words.data[0]:.3f}')
+                        f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.item()/ n_words.item():.3f}')
 
                 # Back-propagation
                 batch_loss.backward()
@@ -497,9 +497,9 @@ class VariationalSolver(Solver):
                 assert not isnan(batch_loss.item())
 
                 if batch_i % self.config.print_every == 0:
-                    print_str = f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.data[0] / n_words.data[0]:.3f}, recon = {recon_loss.data[0] / n_words.data[0]:.3f}, kl_div = {kl_div.data[0] / n_words.data[0]:.3f}'
+                    print_str = f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.item() / n_words.item():.3f}, recon = {recon_loss.item() / n_words.item():.3f}, kl_div = {kl_div.item() / n_words.data[0]:.3f}'
                     if self.config.bow:
-                        print_str += f', bow_loss = {bow_loss.data[0] / n_words.data[0]:.3f}'
+                        print_str += f', bow_loss = {bow_loss.item() / n_words.data[0]:.3f}'
                     tqdm.write(print_str)
 
                 # Back-propagation
@@ -697,8 +697,8 @@ class VariationalSolver(Solver):
                 log_w = (-recon_loss.sum() + log_p_z - log_q_zx).data
                 weights.append(log_w)
                 if j == 0:
-                    n_total_words += n_words.data[0]
-                    kl_div_history.append(kl_div.data[0])
+                    n_total_words += n_words.item()
+                    kl_div_history.append(kl_div.item())
 
             # weights: [n_samples]
             weights = torch.stack(weights, 0)
