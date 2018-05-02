@@ -70,7 +70,7 @@ class BaseRNNDecoder(nn.Module):
         # Sample next word from multinomial word distribution
         if self.sample:
             # x: [batch_size] - word index (next input)
-            x = torch.multinomial(self.softmax(out / self.temperature, dim=1), 1).view(-1)
+            x = torch.multinomial(self.softmax(out / self.temperature), 1).view(-1)
 
         # Greedy sampling
         else:
@@ -234,7 +234,7 @@ class DecoderRNN(BaseRNNDecoder):
                                hidden_size,
                                dropout)
         self.out = nn.Linear(hidden_size, vocab_size)
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
 
     def forward_step(self, x, h,
                      encoder_outputs=None,
