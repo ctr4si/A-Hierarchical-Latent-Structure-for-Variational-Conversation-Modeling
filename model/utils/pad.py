@@ -7,12 +7,14 @@ def pad(tensor, length):
     if isinstance(tensor, Variable):
         var = tensor
         if length > var.size(0):
-            return torch.cat([var, to_var(var.data.new(length - var.size(0), *var.size()[1:]).zero_())])
+            return torch.cat([var,
+                              torch.zeros(length - var.size(0), *var.size()[1:])])
         else:
             return var
     else:
         if length > tensor.size(0):
-            return torch.cat([tensor, tensor.new(length - tensor.size(0), *tensor.size()[1:]).zero_()])
+            return torch.cat([tensor,
+                              torch.zeros(length - tensor.size(0), *tensor.size()[1:])])
         else:
             return tensor
 

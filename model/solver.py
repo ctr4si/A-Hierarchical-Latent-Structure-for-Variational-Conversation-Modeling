@@ -38,7 +38,7 @@ class Solver(object):
                 for name, param in self.model.named_parameters():
                     if 'weight_hh' in name:
                         print('\t' + name)
-                        nn.init.orthogonal(param)
+                        nn.init.orthogonal_(param)
 
                     # bias_hh is concatenation of reset, input, new gates
                     # only set the input gate bias to 2.0
@@ -166,9 +166,9 @@ class Solver(object):
                     target_sentences,
                     target_sentence_length)
 
-                assert not isnan(batch_loss.data[0])
-                batch_loss_history.append(batch_loss.data[0])
-                n_total_words += n_words.data[0]
+                assert not isnan(batch_loss.item())
+                batch_loss_history.append(batch_loss.item())
+                n_total_words += n_words.item()
 
                 if batch_i % self.config.print_every == 0:
                     tqdm.write(
@@ -178,7 +178,7 @@ class Solver(object):
                 batch_loss.backward()
 
                 # Gradient cliping
-                torch.nn.utils.clip_grad_norm(self.model.parameters(), self.config.clip)
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.clip)
 
                 # Run optimizer
                 self.optimizer.step()
@@ -252,12 +252,13 @@ class Solver(object):
             target_sentence_length = [l for len_list in sentence_length for l in len_list[1:]]
             input_conversation_length = [l - 1 for l in conversation_length]
 
-            input_sentences = to_var(torch.LongTensor(input_sentences), eval=True)
-            target_sentences = to_var(torch.LongTensor(target_sentences), eval=True)
-            input_sentence_length = to_var(torch.LongTensor(input_sentence_length), eval=True)
-            target_sentence_length = to_var(torch.LongTensor(target_sentence_length), eval=True)
-            input_conversation_length = to_var(
-                torch.LongTensor(input_conversation_length), eval=True)
+            with torch.no_grad():
+                input_sentences = to_var(torch.LongTensor(input_sentences))
+                target_sentences = to_var(torch.LongTensor(target_sentences))
+                input_sentence_length = to_var(torch.LongTensor(input_sentence_length))
+                target_sentence_length = to_var(torch.LongTensor(target_sentence_length))
+                input_conversation_length = to_var(
+                    torch.LongTensor(input_conversation_length))
 
             if batch_i == 0:
                 self.generate_sentence(input_sentences,
@@ -276,9 +277,9 @@ class Solver(object):
                 target_sentences,
                 target_sentence_length)
 
-            assert not isnan(batch_loss.data[0])
-            batch_loss_history.append(batch_loss.data[0])
-            n_total_words += n_words.data[0]
+            assert not isnan(batch_loss.item())
+            batch_loss_history.append(batch_loss.item())
+            n_total_words += n_words.item()
 
         epoch_loss = np.sum(batch_loss_history) / n_total_words
 
@@ -308,12 +309,12 @@ class Solver(object):
             target_sentence_length = [l for len_list in sentence_length for l in len_list[1:]]
             input_conversation_length = [l - 1 for l in conversation_length]
 
-            input_sentences = to_var(torch.LongTensor(input_sentences), eval=True)
-            target_sentences = to_var(torch.LongTensor(target_sentences), eval=True)
-            input_sentence_length = to_var(torch.LongTensor(input_sentence_length), eval=True)
-            target_sentence_length = to_var(torch.LongTensor(target_sentence_length), eval=True)
-            input_conversation_length = to_var(
-                torch.LongTensor(input_conversation_length), eval=True)
+            with torch.no_grad():
+                input_sentences = to_var(torch.LongTensor(input_sentences))
+                target_sentences = to_var(torch.LongTensor(target_sentences))
+                input_sentence_length = to_var(torch.LongTensor(input_sentence_length))
+                target_sentence_length = to_var(torch.LongTensor(target_sentence_length))
+                input_conversation_length = to_var(torch.LongTensor(input_conversation_length))
 
             sentence_logits = self.model(
                 input_sentences,
@@ -326,9 +327,9 @@ class Solver(object):
                 target_sentences,
                 target_sentence_length)
 
-            assert not isnan(batch_loss.data[0])
-            batch_loss_history.append(batch_loss.data[0])
-            n_total_words += n_words.data[0]
+            assert not isnan(batch_loss.item())
+            batch_loss_history.append(batch_loss.item())
+            n_total_words += n_words.item()
 
         epoch_loss = np.sum(batch_loss_history) / n_total_words
 
@@ -371,8 +372,9 @@ class Solver(object):
             ground_truth = [c for i in conv_indices for c in [conversations[i][n_context:n_context + n_sample_step]]]
             sentence_length = [c for i in conv_indices for c in [sentence_length[i][:n_context]]]
 
-            context = to_var(torch.LongTensor(context), eval=True)
-            sentence_length = to_var(torch.LongTensor(sentence_length), eval=True)
+            with torch.no_grad():
+                context = to_var(torch.LongTensor(context))
+                sentence_length = to_var(torch.LongTensor(sentence_length))
 
             samples = self.model.generate(context, sentence_length, n_context)
 
@@ -482,17 +484,17 @@ class VariationalSolver(Solver):
                     target_sentence_length)
 
                 batch_loss = recon_loss + kl_mult * kl_div
-                batch_loss_history.append(batch_loss.data[0])
-                recon_loss_history.append(recon_loss.data[0])
-                kl_div_history.append(kl_div.data[0])
-                n_total_words += n_words.data[0]
+                batch_loss_history.append(batch_loss.item())
+                recon_loss_history.append(recon_loss.item())
+                kl_div_history.append(kl_div.item())
+                n_total_words += n_words.item()
 
                 if self.config.bow:
                     bow_loss = self.model.compute_bow_loss(target_conversations)
                     batch_loss += bow_loss
-                    bow_loss_history.append(bow_loss.data[0])
+                    bow_loss_history.append(bow_loss.item())
 
-                assert not isnan(batch_loss.data[0])
+                assert not isnan(batch_loss.item())
 
                 if batch_i % self.config.print_every == 0:
                     print_str = f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.data[0] / n_words.data[0]:.3f}, recon = {recon_loss.data[0] / n_words.data[0]:.3f}, kl_div = {kl_div.data[0] / n_words.data[0]:.3f}'
@@ -504,7 +506,7 @@ class VariationalSolver(Solver):
                 batch_loss.backward()
 
                 # Gradient cliping
-                torch.nn.utils.clip_grad_norm(self.model.parameters(), self.config.clip)
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.clip)
 
                 # Run optimizer
                 self.optimizer.step()
@@ -591,17 +593,19 @@ class VariationalSolver(Solver):
             target_sentence_length = [l for len_list in sentence_length for l in len_list[1:]]
             sentence_length = [l for len_list in sentence_length for l in len_list]
 
-            sentences = to_var(torch.LongTensor(sentences), eval=True)
-            sentence_length = to_var(torch.LongTensor(sentence_length), eval=True)
-            input_conversation_length = to_var(
-                torch.LongTensor(input_conversation_length), eval=True)
-            target_sentences = to_var(torch.LongTensor(target_sentences), eval=True)
-            target_sentence_length = to_var(torch.LongTensor(target_sentence_length), eval=True)
+            with torch.no_grad():
+                sentences = to_var(torch.LongTensor(sentences))
+                sentence_length = to_var(torch.LongTensor(sentence_length))
+                input_conversation_length = to_var(
+                    torch.LongTensor(input_conversation_length))
+                target_sentences = to_var(torch.LongTensor(target_sentences))
+                target_sentence_length = to_var(torch.LongTensor(target_sentence_length))
 
             if batch_i == 0:
                 input_conversations = [conv[:-1] for conv in conversations]
                 input_sentences = [sent for conv in input_conversations for sent in conv]
-                input_sentences = to_var(torch.LongTensor(input_sentences), eval=True)
+                with torch.no_grad():
+                    input_sentences = to_var(torch.LongTensor(input_sentences))
                 self.generate_sentence(sentences,
                                        sentence_length,
                                        input_conversation_length,
@@ -622,13 +626,13 @@ class VariationalSolver(Solver):
             batch_loss = recon_loss + kl_div
             if self.config.bow:
                 bow_loss = self.model.compute_bow_loss(target_conversations)
-                bow_loss_history.append(bow_loss.data[0])
+                bow_loss_history.append(bow_loss.item())
 
-            assert not isnan(batch_loss.data[0])
-            batch_loss_history.append(batch_loss.data[0])
-            recon_loss_history.append(recon_loss.data[0])
-            kl_div_history.append(kl_div.data[0])
-            n_total_words += n_words.data[0]
+            assert not isnan(batch_loss.item())
+            batch_loss_history.append(batch_loss.item())
+            recon_loss_history.append(recon_loss.item())
+            kl_div_history.append(kl_div.item())
+            n_total_words += n_words.item()
 
         epoch_loss = np.sum(batch_loss_history) / n_total_words
         epoch_recon_loss = np.sum(recon_loss_history) / n_total_words
@@ -668,13 +672,13 @@ class VariationalSolver(Solver):
             sentence_length = [l for len_list in sentence_length for l in len_list]
 
             # n_words += sum([len([word for word in sent if word != PAD_ID]) for sent in target_sentences])
-
-            sentences = to_var(torch.LongTensor(sentences), eval=True)
-            sentence_length = to_var(torch.LongTensor(sentence_length), eval=True)
-            input_conversation_length = to_var(
-                torch.LongTensor(input_conversation_length), eval=True)
-            target_sentences = to_var(torch.LongTensor(target_sentences), eval=True)
-            target_sentence_length = to_var(torch.LongTensor(target_sentence_length), eval=True)
+            with torch.no_grad():
+                sentences = to_var(torch.LongTensor(sentences))
+                sentence_length = to_var(torch.LongTensor(sentence_length))
+                input_conversation_length = to_var(
+                    torch.LongTensor(input_conversation_length))
+                target_sentences = to_var(torch.LongTensor(target_sentences))
+                target_sentence_length = to_var(torch.LongTensor(target_sentence_length))
 
             # treat whole batch as one data sample
             weights = []

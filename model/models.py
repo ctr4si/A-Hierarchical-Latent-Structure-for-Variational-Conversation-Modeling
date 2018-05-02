@@ -533,7 +533,7 @@ class VHCR(nn.Module):
         """
         batch_size = input_conversation_length.size(0)
         num_sentences = sentences.size(0) - batch_size
-        max_len = input_conversation_length.data.max()
+        max_len = input_conversation_length.data.max().item()
 
         # encoder_outputs: [num_sentences + batch_size, max_source_length, hidden_size]
         # encoder_hidden: [num_layers * direction, num_sentences + batch_size, hidden_size]
@@ -649,7 +649,7 @@ class VHCR(nn.Module):
             log_q_zx = None
 
         # expand z_conv to all associated sentences
-        z_conv = torch.cat([z.view(1, -1).expand(m.data[0], self.config.z_conv_size)
+        z_conv = torch.cat([z.view(1, -1).expand(m.item(), self.config.z_conv_size)
                              for z, m in zip(z_conv, input_conversation_length)])
 
         # latent_context: [num_sentences, context_size + z_sent_size +
