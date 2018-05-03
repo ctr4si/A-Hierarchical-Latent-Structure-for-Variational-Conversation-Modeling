@@ -444,7 +444,7 @@ class VariationalSolver(Solver):
             self.model.train()
             n_total_words = 0
 
-            self.evaluate()
+            # self.evaluate()
 
             for batch_i, (conversations, conversation_length, sentence_length) \
                     in enumerate(tqdm(self.train_data_loader, ncols=80)):
@@ -497,9 +497,9 @@ class VariationalSolver(Solver):
                 assert not isnan(batch_loss.item())
 
                 if batch_i % self.config.print_every == 0:
-                    print_str = f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.item() / n_words.item():.3f}, recon = {recon_loss.item() / n_words.item():.3f}, kl_div = {kl_div.item() / n_words.data[0]:.3f}'
+                    print_str = f'Epoch: {epoch_i+1}, iter {batch_i}: loss = {batch_loss.item() / n_words.item():.3f}, recon = {recon_loss.item() / n_words.item():.3f}, kl_div = {kl_div.item() / n_words.item():.3f}'
                     if self.config.bow:
-                        print_str += f', bow_loss = {bow_loss.item() / n_words.data[0]:.3f}'
+                        print_str += f', bow_loss = {bow_loss.item() / n_words.item():.3f}'
                     tqdm.write(print_str)
 
                 # Back-propagation
@@ -718,3 +718,4 @@ class VariationalSolver(Solver):
         print(print_str)
 
         return word_perplexity
+

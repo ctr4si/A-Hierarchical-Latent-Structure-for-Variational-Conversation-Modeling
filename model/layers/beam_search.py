@@ -94,7 +94,7 @@ class Beam(object):
                 # Loop over all EOS at current step
                 for i in range(eos_indices.size(0) - 1, -1, -1):
                     # absolute index of detected ended sequence
-                    eos_idx = eos_indices[i, 0]
+                    eos_idx = eos_indices[i, 0].item()
 
                     # At which batch EOS is located
                     batch_idx = eos_idx // self.beam_size
@@ -108,10 +108,10 @@ class Beam(object):
                     idx_to_be_replaced = batch_start_idx + beam_idx_to_be_replaced
 
                     # Replace old information with new sequence information
-                    back_pointer[idx_to_be_replaced].data[0] = self.back_pointers[t][eos_idx].data[0]
-                    token_id[idx_to_be_replaced].data[0] = self.token_ids[t][eos_idx].data[0]
+                    back_pointer[idx_to_be_replaced] = self.back_pointers[t][eos_idx].item()
+                    token_id[idx_to_be_replaced] = self.token_ids[t][eos_idx].item()
                     top_k_score[batch_idx,
-                                beam_idx_to_be_replaced] = self.scores[t].view(-1)[eos_idx].data[0]
+                                beam_idx_to_be_replaced] = self.scores[t].view(-1)[eos_idx].item()
                     length[batch_idx][beam_idx_to_be_replaced] = t + 1
 
                     n_eos_in_batch[batch_idx] += 1
@@ -125,7 +125,7 @@ class Beam(object):
         final_score = top_k_score.data
 
         for batch_idx in range(self.batch_size):
-            length[batch_idx] = [length[batch_idx][beam_idx.data[0]]
+            length[batch_idx] = [length[batch_idx][beam_idx.item()]
                                  for beam_idx in top_k_idx[batch_idx]]
 
         # [batch x beam]
