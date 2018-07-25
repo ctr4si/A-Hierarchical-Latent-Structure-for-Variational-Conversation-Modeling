@@ -8,13 +8,13 @@ def pad(tensor, length):
         var = tensor
         if length > var.size(0):
             return torch.cat([var,
-                              torch.zeros(length - var.size(0), *var.size()[1:])])
+                              torch.zeros(length - var.size(0), *var.size()[1:]).cuda()])
         else:
             return var
     else:
         if length > tensor.size(0):
             return torch.cat([tensor,
-                              torch.zeros(length - tensor.size(0), *tensor.size()[1:])])
+                              torch.zeros(length - tensor.size(0), *tensor.size()[1:]).cuda()])
         else:
             return tensor
 
