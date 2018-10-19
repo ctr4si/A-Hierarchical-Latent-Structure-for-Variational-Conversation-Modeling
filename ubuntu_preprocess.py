@@ -235,7 +235,7 @@ if __name__ == '__main__':
 
         print('Saving preprocessed data at', split_data_dir)
         to_pickle(conversation_length, split_data_dir.joinpath('conversation_length.pkl'))
-        to_pickle(conversations, split_data_dir.joinpath('sentences.pkl'))
+        to_pickle(sentences, split_data_dir.joinpath('sentences.pkl'))
         to_pickle(sentence_length, split_data_dir.joinpath('sentence_length.pkl'))
 
         if split_type == 'train':
