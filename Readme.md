@@ -1,5 +1,6 @@
 # Variational Hierarchical Conversation RNN (VHCR)
-[PyTorch 0.4](https://github.com/pytorch/pytorch) Implementation of ["A Hierarchical Latent Structure for Variational Conversation Modeling"](https://arxiv.org/abs/1804.03424) accepted in NAACL 2018 (Oral).
+[PyTorch 0.4](https://github.com/pytorch/pytorch) Implementation of ["A Hierarchical Latent Structure for Variational Conversation Modeling"](https://arxiv.org/abs/1804.03424) (NAACL 2018 Oral)
+* [NAACL 2018 Oral Presentation Video](https://vimeo.com/277671819)
 
 ## Prerequisite
 Install Python packages
